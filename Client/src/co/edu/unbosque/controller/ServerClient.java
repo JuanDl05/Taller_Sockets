@@ -3,12 +3,11 @@ package co.edu.unbosque.controller;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-
-import co.edu.unbosque.model.ChatDTO;
 
 public class ServerClient extends Thread {
 
@@ -34,32 +33,80 @@ public class ServerClient extends Thread {
 	public void run() {
 
 		String word = "";
+		String message = "";
 
-		while (!word.equalsIgnoreCase("Terminado")) {
+		while (!word.equalsIgnoreCase("salir")) {
 			try {
 				this.socket = new Socket(this.address, this.port);
-				System.out.println("Conectado al servidor");
-				System.out.println("Digite un mensaje:");
+				System.out.println("Conectando al servidor");
+				System.out.println("Digite su nombre: ");
 
 				this.out = new DataOutputStream(socket.getOutputStream());
+				this.in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 
 				word = sc.nextLine();
 				this.out.writeUTF(word);
+				
+				int option = 0;
+				boolean over = false;
+
+				while (!over) {
+					
+					System.out.println("Bienvenido a: <<Hamburguesas El Establo>>");
+					System.out.println("1. Menu de hamburguesas");
+					System.out.println("2. Menu de bebidas");
+					System.out.println("3. Menu de papas");
+					System.out.println("4. Salir");
+					System.out.println("Que opcion desea elegir?");
+					System.out.println("-------------------------------------------");
+					
+					option = sc.nextInt();
+					out.writeInt(option);
+
+					switch (option) {
+					case 1: {
+						message = in.readUTF();
+						System.out.println(message);
+						break;
+					}
+					case 2: {
+						message = in.readUTF();
+						System.out.println(message);
+						break;
+					}
+					case 3: {
+						message = in.readUTF();
+						System.out.println(message);
+						break;
+					}
+					case 4: {
+						message = in.readUTF();
+						System.out.println(message);
+						over = true;
+						break;
+					}
+					default:
+						message = in.readUTF();
+						System.out.println(message);
+						break;
+					}
+				}
+				
 				this.out.close();
 				this.socket.close();
 				this.server = new ServerSocket(this.port + 1);
 				this.socket = server.accept();
 				System.out.println("Mensaje recibido! \n");
-				this.in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-				System.out.println(in.readUTF());
 				this.in.close();
 				this.out.close();
 				this.server.close();
+
 			} catch (IOException i) {
 				System.out.println(i);
-			}
+			} 
 		}
 		try {
+			in.close();
 			out.close();
 			socket.close();
 		} catch (IOException i) {
