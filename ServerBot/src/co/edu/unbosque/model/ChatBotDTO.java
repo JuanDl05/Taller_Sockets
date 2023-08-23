@@ -30,6 +30,6 @@ public class ChatBotDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ChatBotDTO [msg=" + text + "]";
+		return "Se envio: [texto=" + text + "]";
 	}
 }
