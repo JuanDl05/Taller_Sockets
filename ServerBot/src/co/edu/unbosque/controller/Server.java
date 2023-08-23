@@ -6,7 +6,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.InputMismatchException;
 
 public class Server extends Thread {
 
@@ -54,30 +53,30 @@ public class Server extends Thread {
 
 					option = in.readInt();
 					switch (option) {
-					case 1:{
+					case 1: {
 						out.writeUTF(" Hamburguesa sencilla: $13.000 \n Hamburguesa especial: $15.500 \n"
 								+ " Hamburguesa crispy onion bbq: $20.000 \n Hamburguesa pollo: $12.000 \n");
 						break;
 					}
-					case 2:{
+					case 2: {
 						out.writeUTF(" Coca-Cola: $4.000 \n Sprite: $3.000 \n Colombiana: $3.000 \n Hit: $2.500 \n");
 						break;
 					}
-					case 3:{
+					case 3: {
 						out.writeUTF(" Papas pequenas: $5.500 \n Papas medianas: $7.000 \n Papas grandes: $8.000 \n");
 						break;
 					}
-					case 4:{
+					case 4: {
 						out.writeUTF("Gracias por ver el menu!. Que tenga un buen dia!");
 						over = true;
 						break;
 					}
-					default:{
+					default: {
 						out.writeUTF("Solo digite numeros del 1 al 4! \n");
 					}
 					}
 				}
-				
+
 			} catch (IOException i) {
 				System.out.println(i);
 				break;
@@ -90,9 +89,9 @@ public class Server extends Thread {
 				this.socketR.close();
 				this.in.close();
 				this.server.close();
-				
+
 				System.out.println("Conexion cerrada.");
-				
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -104,6 +103,11 @@ public class Server extends Thread {
 			e.printStackTrace();
 		}
 
+	}
+
+	public static void main(String[] args) {
+		Server server = new Server(9100);
+		server.start();
 	}
 
 }
