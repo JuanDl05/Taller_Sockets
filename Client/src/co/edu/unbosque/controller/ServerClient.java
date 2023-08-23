@@ -3,7 +3,6 @@ package co.edu.unbosque.controller;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -46,12 +45,12 @@ public class ServerClient extends Thread {
 
 				word = sc.nextLine();
 				this.out.writeUTF(word);
-				
+
 				int option = 0;
 				boolean over = false;
 
 				while (!over) {
-					
+
 					System.out.println("Bienvenido a: <<Hamburguesas El Establo>>");
 					System.out.println("1. Menu de hamburguesas");
 					System.out.println("2. Menu de bebidas");
@@ -59,7 +58,7 @@ public class ServerClient extends Thread {
 					System.out.println("4. Salir");
 					System.out.println("Que opcion desea elegir?");
 					System.out.println("-------------------------------------------");
-					
+
 					option = sc.nextInt();
 					out.writeInt(option);
 
@@ -91,7 +90,7 @@ public class ServerClient extends Thread {
 						break;
 					}
 				}
-				
+
 				this.out.close();
 				this.socket.close();
 				this.server = new ServerSocket(this.port + 1);
@@ -103,7 +102,7 @@ public class ServerClient extends Thread {
 
 			} catch (IOException i) {
 				System.out.println(i);
-			} 
+			}
 		}
 		try {
 			in.close();
@@ -113,6 +112,10 @@ public class ServerClient extends Thread {
 			System.out.println(i);
 		}
 
+	}
+	public static void main(String[] args) {
+		ServerClient client = new ServerClient("127.0.0.1", 9100);
+		client.start();
 	}
 
 }
