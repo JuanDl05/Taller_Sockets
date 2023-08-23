@@ -4,108 +4,109 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import co.edu.unbosque.model.ChatBotDTO;
-
 public class Server extends Thread {
 
-	private Socket socket; 
+	private Socket socket;
 	private Socket socketR;
 	private ServerSocket server;
 	private DataInputStream in;
 	private DataOutputStream out;
 	private int port;
-	private String addressClient;
-	private String clientName;
 
 	public Server(int port) {
-		
+
 		this.socket = null;
 		this.socketR = null;
 		this.server = null;
 		this.in = null;
 		this.out = null;
 		this.port = port;
-		this.addressClient = addressClient;
-		this.clientName = clientName;
+
 	}
 
 	@Override
 	public void run() {
-		
+
 		String word = "";
-		while (!word.equalsIgnoreCase("Terminado")) {
+		while (!word.equalsIgnoreCase(" ")) {
 			try {
+
 				this.server = new ServerSocket(this.port);
 				System.out.println("Servidor iniciado");
 				System.out.println("Esperando por un cliente...");
 				this.socket = server.accept();
 				System.out.println("- Cliente aceptado!");
+
 				this.in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+				this.out = new DataOutputStream(socket.getOutputStream());
 
 				word = in.readUTF();
-				System.out.println("El cliente envio: " + word + "\n");
+				System.out.println("El nombre del cliente es: " + word + "\n");
 
-				this.socketR = new Socket(this.socket.getInetAddress(), this.port + 1);
-				this.out = new DataOutputStream(socketR.getOutputStream());
-				this.out.writeUTF("Usted envio: " + word);
-				this.out.close();
-				this.socketR.close();
+				int option;
+				boolean over = false;
 
-				this.in.close();
-				this.server.close();
-				
-				int opcion;
-				
-				while(true) {
-					try {
-						opcion = in.readInt();
-						
-						switch(opcion) {
-						case 1:
-							out.writeUTF("Hamburguesa sencilla: 13000 \n Hamburguesa especial: 15500 \n"
-									+ " Hamburguesa crispy onion bbq: 20000 \n Hamburguesa pollo: 12000" );
-						break;
+				while (!over) {
 
-						case 2:
-							out.writeUTF("Coca-Cola: 4000 \n Sprite: 3000 \n Colombiana: 3000 \n Hit: 2500");
+					option = in.readInt();
+					switch (option) {
+					case 1: {
+						out.writeUTF(" Hamburguesa sencilla: $13.000 \n Hamburguesa especial: $15.500 \n"
+								+ " Hamburguesa crispy onion bbq: $20.000 \n Hamburguesa pollo: $12.000 \n");
 						break;
-						
-						case 3:
-							out.writeUTF("Papas pequeñas: 5500 \n Papas medianas: 7000 \n Papas grandes: 8000");
+					}
+					case 2: {
+						out.writeUTF(" Coca-Cola: $4.000 \n Sprite: $3.000 \n Colombiana: $3.000 \n Hit: $2.500 \n");
 						break;
-						
-						case 4:
-							out.writeUTF("Gracias por ver el menú!. Que tenga un buen día");
+					}
+					case 3: {
+						out.writeUTF(" Papas pequenas: $5.500 \n Papas medianas: $7.000 \n Papas grandes: $8.000 \n");
 						break;
-						
-						default:
-							out.writeUTF("Solo digite números del 1 al 4!");
-						}
-					}catch(IOException e) {
-						
+					}
+					case 4: {
+						out.writeUTF("Gracias por ver el menu!. Que tenga un buen dia!");
+						over = true;
+						break;
+					}
+					default: {
+						out.writeUTF("Solo digite numeros del 1 al 4! \n");
+					}
 					}
 				}
+
 			} catch (IOException i) {
 				System.out.println(i);
+				break;
+			}
+
+			try {
+				this.socketR = new Socket(this.socket.getInetAddress(), this.port + 1);
+				this.out = new DataOutputStream(socketR.getOutputStream());
+				this.out.close();
+				this.socketR.close();
+				this.in.close();
+				this.server.close();
+
+				System.out.println("Conexion cerrada.");
+
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
-		System.out.println("Conexion terminada.");
 
 		try {
 			socket.close();
-			in.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
+
 	public static void main(String[] args) {
-		Server server = new Server(5000);
+		Server server = new Server(9100);
 		server.start();
 	}
 
